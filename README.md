@@ -1,3 +1,10 @@
+Work done by https://github.com/richiewebgate
+Just added a a method to receive a message by mqtt and the call Volumio (plugin) to show this message
+https://github.com/maltejahn/volumio-plugins-sources/tree/master/notifybymqtt
+
+
+Also i had trouble with sub topics. With Device/setx it worked, but with Subtopic/Device/setx is hasnt. So i added quite dirty...
+
 # volumio-mqtt
 NodeJS MQTT adapter for volumio.org music player, to control your player using MQTT messages.
 
