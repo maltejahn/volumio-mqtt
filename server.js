@@ -28,18 +28,20 @@ mqttClient.on('message', function (topic, rawMessage) {
         }
 
         var arr = topic.split('/');
-        var action = arr[2];
-        if (arr[1] == "set") {
+        var action = arr[2+config.topic_offset];
+        if (arr[1+config.topic_offset] == "set") {
+	    if (config.debug) printLog("set received ");
+	    if (config.debug) printLog("action: " + action);
             if (action === "volume") { // numeric value between 0 and 100, mute, umute, +, -
-                if (arr[3] === "percent") {
+                if (arr[3+config.topic_offset] === "percent") {
                     socket.emit('volume', Number(msg));
-                } else if (arr[3] === "mute") { // true | false
+                } else if (arr[3+config.topic_offset] === "mute") { // true | false
                     socket.emit('volume', msg === "true" ? "mute" : "unmute");
-                } else if (arr[3] === "push") { // + | -
+                } else if (arr[3+config.topic_offset] === "push") { // + | -
                     socket.emit('volume', msg);
-                } else if (arr[3] === "up") {
+                } else if (arr[3+config.topic_offset] === "up") {
                     socket.emit('volume', "+");
-                } else if (arr[3] === "down") {
+                } else if (arr[3+config.topic_offset] === "down") {
                     socket.emit('volume', "-");
                 }
             } else if (action == "play") {
@@ -69,13 +71,18 @@ mqttClient.on('message', function (topic, rawMessage) {
             } else if (action == "addPlay") {
                 // e.g. {"service":"webradio","title":webradioname,"uri":webradioUri}
                 socket.emit('addPlay', JSON.parse(msg));
+            } else if (action == "callMethod") {
+                if (config.debug) printLog("Message Value is");
+                if (config.debug) printLog(msg);
+                socket.emit('callMethod',  {endpoint:'user_interface/notifybymqtt',method:'submitMyMessage',data:msg});
+            
             }
-        } else if (arr[1] === "get") {
-            if (arr[2] === "status") {
+        } else if (arr[1+config.topic_offset] === "get") {
+            if (arr[2+config.topic_offset] === "status") {
                 socket.emit('getState');
-            } else if (arr[2] === "multiroomdevices") {
+            } else if (arr[2+config.topic_offset] === "multiroomdevices") {
                 socket.emit('getMultiRoomDevices');
-            } else if (arr[2] === "browsesources") {
+            } else if (arr[2+config.topic_offset] === "browsesources") {
                 socket.emit('getBrowseSources');
             }
         }
